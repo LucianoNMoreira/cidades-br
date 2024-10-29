@@ -2,13 +2,13 @@
 
 import axios from "axios";
 import { useEffect, useState } from "react";
-import Cidade from "./cidade";
+import UfSelecionada from "./components/UfSelecionada";
+import Cidades from "./components/Cidades";
 
 export default function Home() {
   const [ufs, setUfs] = useState([])
   const [ufSelecionada, setUfSelecionada] = useState()
-  const [cidades, setCidades] = useState([])
-
+  
   async function listarUFs() {
     try {
       const resposta = await axios.get('https://servicodados.ibge.gov.br/api/v1/localidades/estados')
@@ -34,17 +34,6 @@ export default function Home() {
     })
   }
 
-  async function listarCidades(uf) {
-    try {
-      const resposta = await axios.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/distritos`)
-      const lista = resposta.data
-      lista.sort((cidade1, cidade2) => cidade1.nome.localeCompare(cidade2.nome))
-      setCidades(lista)
-    } catch(e) {
-      console.error('Deu ruim', e)
-    }
-  }
-
   function onSelect(ev) {
     const sigla = ev.target.value
     const uf = ufs.find(it => it.sigla === sigla)
@@ -54,15 +43,8 @@ export default function Home() {
   useEffect(() => {
     if (ufs.length === 0) {
       listarUFs()
-      // listarUFsPromise().then(ufs => setUfs(ufs)).catch(e => console.error('Deu ruim', e))
     }
   }, [ufs])
-
-  useEffect(() => {
-    if (ufSelecionada) {
-      listarCidades(ufSelecionada.sigla)
-    }
-  }, [ufSelecionada])
 
   return (
     <>
@@ -79,17 +61,12 @@ export default function Home() {
 
       <hr/>
 
+      <UfSelecionada
+        uf={ufSelecionada}
+      />
+      
       {ufSelecionada &&
-        <>
-          <h2>Cidades de {ufSelecionada.nome}</h2>
-          <ul>
-            {cidades.map((cidade, index) => {
-              return(
-                <Cidade key={index} cidade={cidade} />
-              )
-            })}
-          </ul>
-        </>
+        <Cidades uf={ufSelecionada} />
       }
 
     </>
