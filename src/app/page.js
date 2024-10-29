@@ -1,13 +1,14 @@
 'use client'
 
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import UfSelecionada from "./components/UfSelecionada";
 import Cidades from "./components/Cidades";
+import { UfContext } from "./Contexts/UfContext";
 
 export default function Home() {
   const [ufs, setUfs] = useState([])
-  const [ufSelecionada, setUfSelecionada] = useState()
+  const { ufSelecionada, setUfSelecionada } = useContext(UfContext)
   
   async function listarUFs() {
     try {
