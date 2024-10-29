@@ -11,7 +11,9 @@ export default function UfSelecionada({ uf }) {
                 <p>Você ainda não selecionou uma UF</p>
             }
             {uf &&                
-                <p>Você selecionou a UF <strong>{uf.nome}</strong></p>
+                <p>Você selecionou a UF <strong>{uf.nome}</strong>. 
+                    <a href={`/cidades?uf=${uf.sigla}`}>Clique aqui para abrir as cidades em uma nova página</a>
+                </p>
             }
         </>
     )
