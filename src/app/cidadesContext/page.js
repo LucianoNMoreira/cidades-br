@@ -12,7 +12,7 @@ export default function Cidades() {
 
     async function listarCidades(uf) {
         try {
-          const resposta = await axios.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/distritos`)
+          const resposta = await axios.get(`/api/v1/cidades?uf=${uf}`)
           const lista = resposta.data
           lista.sort((cidade1, cidade2) => cidade1.nome.localeCompare(cidade2.nome))
           setCidades(lista)
