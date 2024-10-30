@@ -1,9 +1,8 @@
 import axios from "axios"
 
 export async function GET(request, { params }) {
-  const { uf } = await params
-
-  return Response.json(await getUf(uf))
+    const { uf } = await params
+    return Response.json(await getUf(uf))
 }
 
 async function getUf(uf) {

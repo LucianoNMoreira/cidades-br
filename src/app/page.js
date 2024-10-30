@@ -1,45 +1,21 @@
 'use client'
 
 import axios from "axios";
-import { useEffect, useState } from "react";
-import Cidade from "./cidade";
+import { useContext, useEffect, useState } from "react";
+import UfSelecionada from "./components/UfSelecionada";
+import Cidades from "./components/Cidades";
+import { UfContext } from "./Contexts/UfContext";
 
 export default function Home() {
   const [ufs, setUfs] = useState([])
-  const [ufSelecionada, setUfSelecionada] = useState()
-  const [cidades, setCidades] = useState([])
-
+  const { ufSelecionada, setUfSelecionada } = useContext(UfContext)
+  
   async function listarUFs() {
     try {
-      const resposta = await axios.get('https://servicodados.ibge.gov.br/api/v1/localidades/estados')
+      const resposta = await axios.get('/api/v1/ufs')
       const lista = resposta.data
       lista.sort((uf1, uf2) => uf1.nome.localeCompare(uf2.nome))
       setUfs(lista)
-    } catch(e) {
-      console.error('Deu ruim', e)
-    }
-  }
-
-  function listarUFsPromise() {
-    return new Promise((resolve, reject) => {
-      axios.get('https://servicodados.ibge.gov.br/api/v1/localidades/estados')
-      .then((resposta) => {
-        const lista = resposta.data
-        lista.sort((uf1, uf2) => uf1.nome.localeCompare(uf2.nome))  
-        resolve(lista)
-      })
-      .catch(e => {
-        reject(e)
-      })
-    })
-  }
-
-  async function listarCidades(uf) {
-    try {
-      const resposta = await axios.get(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/distritos`)
-      const lista = resposta.data
-      lista.sort((cidade1, cidade2) => cidade1.nome.localeCompare(cidade2.nome))
-      setCidades(lista)
     } catch(e) {
       console.error('Deu ruim', e)
     }
@@ -54,15 +30,8 @@ export default function Home() {
   useEffect(() => {
     if (ufs.length === 0) {
       listarUFs()
-      // listarUFsPromise().then(ufs => setUfs(ufs)).catch(e => console.error('Deu ruim', e))
     }
   }, [ufs])
-
-  useEffect(() => {
-    if (ufSelecionada) {
-      listarCidades(ufSelecionada.sigla)
-    }
-  }, [ufSelecionada])
 
   return (
     <>
@@ -79,17 +48,12 @@ export default function Home() {
 
       <hr/>
 
+      <UfSelecionada
+        uf={ufSelecionada}
+      />
+      
       {ufSelecionada &&
-        <>
-          <h2>Cidades de {ufSelecionada.nome}</h2>
-          <ul>
-            {cidades.map((cidade, index) => {
-              return(
-                <Cidade key={index} cidade={cidade} />
-              )
-            })}
-          </ul>
-        </>
+        <Cidades uf={ufSelecionada} />
       }
 
     </>
